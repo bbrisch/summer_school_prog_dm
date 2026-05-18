@@ -1,0 +1,21 @@
+v_cut : 2.5
+n_simu : 10
+soc_0 : 0.99
+loading_profiles :
+  - -2.8
+  - -4
+model_params :
+  Q : 10000
+  R : 0.01
+  dt : 1
+  omega_std : 0.001
+  eta_std : 0.001
+  voc_params : 
+    vL : 1.35531394
+    v0 : 4.12017677
+    gamma : 0.13286143
+    alpha : 0.16945463
+    beta : 2.34538224
+
+
+
