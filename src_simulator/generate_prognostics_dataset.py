@@ -43,7 +43,7 @@ for i, load in enumerate(loading_profiles):
         s = s[
             sim_config["v_cut"] * 1.1 < s
         ]  # Eliminate data that falls under the threshold
-        s = (s - s[0]) / s[0]  #
+        s = -1 * (s - s[0]) / s[0]  #
 
         processed_data.append(s)
         id_column.append(np.ones_like(s) * exp_id)
