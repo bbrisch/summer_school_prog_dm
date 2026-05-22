@@ -7,8 +7,8 @@ loading_profiles :
 model_params :
   Q : 10000
   R : 0.01
-  dt : 1
-  omega_std : 0.001
+  dt : 20
+  omega_std : 0.005
   eta_std : 0.001
   voc_params : 
     vL : 1.35531394
