@@ -123,3 +123,38 @@ class CustomHSMM(himap.base.GaussianHSMM):
                 break
 
         return np.clip(RUL, 0, np.inf)
+
+
+def predict_hsmm_bounds(
+    trajectory: np.array,
+    model: CustomHSMM,
+    max_support: int = 612,
+    alpha: float = 0.005,
+) -> list[np.array, np.array, np.array]:
+    """
+    Function that generates prognostics using an existing HSMM model.
+    - trajectory: Array with CMD of a single trajectory
+    - model: trained hsmm model
+    - max_support: maximum value of RUL used for generating prognostics.
+    - alpha: coinfidence level for generating the intervals
+    """
+
+    expected, lb, ub = model.prognostic_bounds(trajectory, max_support, alpha=alpha)
+
+    return expected, np.array(lb), np.array(ub)
+
+
+def predict_hsmm_pdf_staked(
+    trajectory: np.array, model: CustomHSMM, previous_predictions: list, max_support=612
+) -> np.array:
+    """
+    Function that generates pdf prognostics using an existing HSMM model. The predictions are staked to generate the final prognostics.
+    - trajectory: Array with CMD of a single trajectory
+    - model: trained hsmm model
+    - previous_predictions: list with previous predictions.
+    - max_support: maximum value of RUL used for generating prognostics.
+    """
+
+    pdf_prognopstic = model.prognostics_pdf(trajectory, max_support)
+    previous_predictions.append(pdf_prognopstic)
+    return previous_predictions
