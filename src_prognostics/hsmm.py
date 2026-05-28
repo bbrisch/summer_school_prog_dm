@@ -145,7 +145,10 @@ def predict_hsmm_bounds(
 
 
 def predict_hsmm_pdf_staked(
-    trajectory: np.array, model: CustomHSMM, previous_predictions: list, max_support=612
+    trajectory: np.array,
+    model: CustomHSMM,
+    previous_predictions: list,
+    max_support: int = 612,
 ) -> np.array:
     """
     Function that generates pdf prognostics using an existing HSMM model. The predictions are staked to generate the final prognostics.
