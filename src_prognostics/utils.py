@@ -1,6 +1,7 @@
 import os
 import pickle as pkl
 import numpy as np
+from numpy import ndarray
 import pandas as pd
 
 
@@ -37,12 +38,14 @@ def save_prognostics(prognostics: list, file_name: str):
 
 
 def load_prognostics(file_name: str):
-    path = os.path.join("himap_results", "prognostics", file_name + ".pkl")
-    assert file_name in [
-        "train",
-        "validation",
-        "test",
-    ], 'File name can be either "train", "validation" or "test" '
+    if ".pkl" not in file_name:
+        file_name = f"{file_name}.pkl"
+    path = os.path.join("himap_results", "prognostics", file_name)
+
+    if not any([mode in file_name for mode in ["train", "validation", "test"]]):
+        raise RuntimeError(
+            f'File name {file_name} has to be either "train", "validation" or "test"!'
+        )
 
     with open(path, "rb") as f:
         prognostics = pkl.load(f)
@@ -80,3 +83,37 @@ def format_data(df) -> dict:
         traj_counter += 1
 
     return output_dict, max_len
+
+def list_to_nan_padded_array(arr_list: list[ndarray]) -> ndarray:
+    """
+    Converts a list of 2D-arrays with different lengths into
+    a single 3D-array with fixed length, but padded with nan values
+
+    Args:
+        arr_list: list of N 2D arrays with sizes (Ti, D)
+    
+    Returns:
+        nan_array (N, Tmax, D)
+    """
+    # 1. Determine dimensions
+    num_comps = len(arr_list)
+    max_rows = np.max([a.shape[0] for a in arr_list])
+    num_cols = arr_list[0].shape[1] # Assumes all matrices have the same number of columns
+    
+    # 2. Initialize a 3D array full of NaNs
+    nan_array = np.full((num_comps, max_rows, num_cols), np.nan)
+    
+    # 3. Fill the array slice-by-slice
+    for k in range(num_comps):
+        nan_array[k, :arr_list[k].shape[0], :] = arr_list[k]
+    return nan_array
+
+
+def calc_M(R: ndarray, R_perfect: ndarray, var_R: ndarray) -> list[ndarray]:
+    """
+    Calculates the percentage-wise deviation from the perfect policy
+    as well as the variance.
+    """
+    M = (R - R_perfect) / R_perfect
+    var_M = var_R / R_perfect**2
+    return M, var_M
