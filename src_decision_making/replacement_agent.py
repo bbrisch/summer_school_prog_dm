@@ -161,8 +161,6 @@ class ReplacementAgent:
         costs = np.zeros(tfs.shape) # (N,)
         tlcs = np.zeros(tfs.shape)  # (N,)
         for k in range(prog.shape[1]):
-            if (k % 5) == 0:
-                print(f"Step: {k}")
             # get True/False non-nan indices
             if (np.sum(~np.isnan(prog[:, k, :])) > 0) and (np.size(prog[states, k, :]) > 0):
 
