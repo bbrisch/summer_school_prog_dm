@@ -58,7 +58,7 @@ nest-asyncio2==1.7.2
     # via ipykernel
 numba==0.65.1
     # via himap
-numpy==2.4.6
+#numpy==2.4.6
     # via
     #   summer-school-prog-dm (pyproject.toml)
     #   contourpy
@@ -72,7 +72,7 @@ packaging==26.2
     # via
     #   ipykernel
     #   matplotlib
-pandas==3.0.3
+#pandas==3.0.3
     # via himap
 parso==0.8.7
     # via jedi
