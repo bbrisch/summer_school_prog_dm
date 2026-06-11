@@ -34,7 +34,7 @@ plt.rcParams.update(
         "legend.fontsize": 15,
         "lines.linewidth": 2.5,
         "font.size": 18,
-        "figure.figsize": (10, 6),
+        "figure.figsize": (15, 9),
     }
 )
 
@@ -42,7 +42,7 @@ plt.rcParams.update(
 def plot_policy_comparison(results: dict, alpha: float=0.95) -> None:
     z = stats.norm.ppf(1 - (1 - alpha) / 2)
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots()
 
     for key, (c, t, cr, var) in results.items():
         err = z * np.sqrt(var)
@@ -81,7 +81,7 @@ def plot_policy_comparison(results: dict, alpha: float=0.95) -> None:
     return
 
 def plot_cp_vs_cc(results: dict) -> None:
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots()
 
     for key, (c, t, cr, var) in results.items():
         n_cp = np.sum(abs(c-10)<1e-3)
