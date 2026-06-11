@@ -27,6 +27,17 @@ POSITIONS = {
     "my_policy": 4,
 }
 
+plt.rcParams.update(
+    {
+        "font.family": "serif",
+        "axes.labelsize": 22,
+        "legend.fontsize": 15,
+        "lines.linewidth": 2.5,
+        "font.size": 18,
+        "figure.figsize": (10, 6),
+    }
+)
+
 
 def plot_policy_comparison(results: dict, alpha: float=0.95) -> None:
     z = stats.norm.ppf(1 - (1 - alpha) / 2)
