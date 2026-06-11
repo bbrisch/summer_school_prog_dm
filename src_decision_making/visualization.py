@@ -34,7 +34,7 @@ plt.rcParams.update(
         "legend.fontsize": 15,
         "lines.linewidth": 2.5,
         "font.size": 18,
-        "figure.figsize": (15, 9),
+        "figure.figsize": (12, 7.5),
     }
 )
 
@@ -110,7 +110,7 @@ def plot_cp_vs_cc(results: dict) -> None:
 
     ax.set_xticks(xticks, xticklabels)
     ax.set_xlabel("Policy", labelpad=15)
-    ax.set_ylabel("Preventive vs. corrective replacements", rotation=90, labelpad=15)
+    ax.set_ylabel("Preventive vs. corrective reps", rotation=90, labelpad=15)
 
     yticks = np.linspace(0, 1, 6)
     ax.set_yticks(yticks, yticks)
