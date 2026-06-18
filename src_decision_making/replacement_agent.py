@@ -3,31 +3,45 @@ from numpy import ndarray
 
 from src_prognostics.utils import load_prognostics, list_to_nan_padded_array
 
+
 class ReplacementAgent:
-    def __init__(self, cf: dict) -> None:
+    def __init__(self, prog_model_name, cf: dict) -> None:
         self.cf = cf
+        self.prog_model_name = prog_model_name
         self._load_prognostics()
         self._get_tfs()
         self._get_prog()
         return
-    
+
     def _load_prognostics(self) -> None:
-        self.d_train = load_prognostics(file_name="train")
-        self.d_val = load_prognostics(file_name="validation")
-        self.d_test = load_prognostics(file_name="test")
+        self.d_train = load_prognostics(
+            model_name=self.prog_model_name, file_name="train"
+        )
+        self.d_val = load_prognostics(
+            model_name=self.prog_model_name, file_name="validation"
+        )
+        self.d_test = load_prognostics(
+            model_name=self.prog_model_name, file_name="test"
+        )
         return
-    
+
     def _get_tfs(self) -> None:
-        self.trainval_tfs = np.array([k.shape[0] for k in self.d_train+self.d_val]) + 0.5
+        self.trainval_tfs = (
+            np.array([k.shape[0] for k in self.d_train + self.d_val]) + 0.5
+        )
         self.test_tfs = np.array([k.shape[0] for k in self.d_test]) + 0.5
         return
-    
+
     def _get_prog(self) -> None:
-        self.trainval_prog = list_to_nan_padded_array(arr_list=self.d_train+self.d_val)
+        self.trainval_prog = list_to_nan_padded_array(
+            arr_list=self.d_train + self.d_val
+        )
         self.test_prog = list_to_nan_padded_array(arr_list=self.d_test)
-        
-        self.trainval_prog = self.trainval_prog[:, self.cf["Delta_T"]-1::self.cf["Delta_T"]]
-        self.test_prog = self.test_prog[:, self.cf["Delta_T"]-1::self.cf["Delta_T"]]
+
+        self.trainval_prog = self.trainval_prog[
+            :, self.cf["Delta_T"] - 1 :: self.cf["Delta_T"]
+        ]
+        self.test_prog = self.test_prog[:, self.cf["Delta_T"] - 1 :: self.cf["Delta_T"]]
         return
 
     def var_cr(self, c: ndarray, t: ndarray) -> float:
@@ -50,7 +64,7 @@ class ReplacementAgent:
                 - 2 * np.mean(c) * np.cov(c, t)[0, 1] / np.mean(t) ** 3
             )
         )
-    
+
     def opt_pol(self, tfs: ndarray) -> list:
         """
         Optimal replacement policy: components are replaced at last possible
@@ -134,7 +148,7 @@ class ReplacementAgent:
         pol: callable,
         tfs: ndarray,
         prog: ndarray,
-        pol_args: list | None=None,
+        pol_args: list | None = None,
     ) -> list:
         """
         Evalulation of a heuristic for a given cost ratio. The prognostic input is passed
@@ -157,12 +171,14 @@ class ReplacementAgent:
         """
         # actually failures before Delta_t are not implemented in the heuristics check!!
         # state vector, keeps a record of all replaced / failed components
-        states = np.ones(tfs.shape, dtype=bool) # (N,)
-        costs = np.zeros(tfs.shape) # (N,)
+        states = np.ones(tfs.shape, dtype=bool)  # (N,)
+        costs = np.zeros(tfs.shape)  # (N,)
         tlcs = np.zeros(tfs.shape)  # (N,)
         for k in range(prog.shape[1]):
             # get True/False non-nan indices
-            if (np.sum(~np.isnan(prog[:, k, :])) > 0) and (np.size(prog[states, k, :]) > 0):
+            if (np.sum(~np.isnan(prog[:, k, :])) > 0) and (
+                np.size(prog[states, k, :]) > 0
+            ):
 
                 if np.sum(np.isnan(prog[states, k, :])) > 0:
                     raise Exception("nan value in prog detected!!")
@@ -170,7 +186,9 @@ class ReplacementAgent:
                 # calculate actions -> call individual heuristics
                 time = (k + 1) * self.cf["Delta_T"]
                 acts = np.zeros(states.shape, bool)
-                acts[states] = pol(prog=prog[states, k, :], time=time, pol_args=pol_args)
+                acts[states] = pol(
+                    prog=prog[states, k, :], time=time, pol_args=pol_args
+                )
 
                 s2, c2, t2 = self.step(
                     states=states[states],
@@ -187,7 +205,7 @@ class ReplacementAgent:
         # evaluate those trajectories, where performed DN at last decision time before failure
         if np.sum(states) != 0:
             raise RuntimeError()
-        
+
         try:
             assert not (costs == 0).any()
             assert not (tlcs == 0).any()
