@@ -27,27 +27,35 @@ POSITIONS = {
     "my_policy": 4,
 }
 
+X_LABELS = {
+    "opt_pol": "Opt",
+    "do_nothing": "DN",
+    "age": "Age",
+    "prob_thres": "Prob",
+    "my_policy": "My",
+
+}
+
 plt.rcParams.update(
     {
         "font.family": "serif",
-        "axes.labelsize": 22,
-        "legend.fontsize": 15,
+        "axes.labelsize": 18,
+        "legend.fontsize": 14,
         "lines.linewidth": 2.5,
-        "font.size": 18,
-        "figure.figsize": (12, 7.5),
+        "font.size": 14,
+        "figure.figsize": (12, 5),
     }
 )
 
 
 def plot_policy_comparison(results: dict, alpha: float=0.95) -> None:
     z = stats.norm.ppf(1 - (1 - alpha) / 2)
-
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(nrows=1, ncols=2)
 
     for key, (c, t, cr, var) in results.items():
         err = z * np.sqrt(var)
 
-        ax.errorbar(
+        ax[0].errorbar(
             x=POSITIONS[key],
             y=[cr],
             yerr=err,
@@ -64,30 +72,22 @@ def plot_policy_comparison(results: dict, alpha: float=0.95) -> None:
         )
 
     xticks = [POSITIONS[k] for k in results.keys()]
-    xticklabels = [LABELS[k] for k in results.keys()]
+    xticklabels = [X_LABELS[k] for k in results.keys()]
 
-    ax.set_xticks(xticks, xticklabels)
-    ax.set_xlabel("Policy", labelpad=15)
-    ax.set_ylabel(r"$\frac{E[C]}{E[T]}$", rotation=0, labelpad=25)
+    ax[0].set_xticks(xticks, xticklabels)
+    ax[0].set_xlabel("Policy", labelpad=10)
+    ax[0].set_ylabel(r"$\frac{E[C]}{E[T]}$", rotation=0, labelpad=20)
 
-    #ax.set_yscale("symlog", linthresh=0.08)
-    #yticks = np.array([0.06, 0.08, 0.1, 0.2, 0.4, 0.6])
     yticks=[0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
-    ax.set_yticks(yticks, yticks)
-
-    ax.legend()
-    ax.grid()
-    plt.show()
-    return
-
-def plot_cp_vs_cc(results: dict) -> None:
-    fig, ax = plt.subplots()
+    ax[0].set_yticks(yticks, yticks)
+    ax[0].legend()
+    ax[0].grid()
 
     for key, (c, t, cr, var) in results.items():
         n_cp = np.sum(abs(c-10)<1e-3)
         cp_ratio = n_cp/c.size
         if cp_ratio > 1e-6: 
-            bar_cp = ax.bar(
+            bar_cp = ax[1].bar(
                 x=POSITIONS[key],
                 height=cp_ratio,
                 bottom=0,
@@ -95,7 +95,7 @@ def plot_cp_vs_cc(results: dict) -> None:
                 label=rf"preventive",
             )
         if n_cp != c.size:
-            bar_cc = ax.bar(
+            bar_cc = ax[1].bar(
                 x=POSITIONS[key],
                 height=1.0-cp_ratio,
                 bottom=cp_ratio,
@@ -106,17 +106,16 @@ def plot_cp_vs_cc(results: dict) -> None:
                 bar.set_hatch("xxx")
 
     xticks = [POSITIONS[k] for k in results.keys()]
-    xticklabels = [LABELS[k] for k in results.keys()]
+    xticklabels = [X_LABELS[k] for k in results.keys()]
 
-    ax.set_xticks(xticks, xticklabels)
-    ax.set_xlabel("Policy", labelpad=15)
-    ax.set_ylabel("Preventive vs. corrective reps", rotation=90, labelpad=15)
+    ax[1].set_xticks(xticks, xticklabels)
+    ax[1].set_xlabel("Policy", labelpad=10)
+    ax[1].set_ylabel(r"$c_p$ vs. $c_c$", rotation=90, labelpad=0)
 
     yticks = np.linspace(0, 1, 6)
-    ax.set_yticks(yticks, yticks)
-    ax.yaxis.set_major_formatter(FormatStrFormatter("%.1f"))
-
-    ax.legend(loc="upper left", bbox_to_anchor=(1.01, 0.99))
-    ax.grid()
+    ax[1].set_yticks(yticks, yticks)
+    ax[1].yaxis.set_major_formatter(FormatStrFormatter("%.1f"))
+    ax[1].legend(loc="upper left", bbox_to_anchor=(1.01, 0.99))
+    ax[1].grid()
     plt.show()
     return
