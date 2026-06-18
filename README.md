@@ -23,3 +23,5 @@ To make this easier for you, we provide **Google Colab notebooks** ☁️, which
 ### [**<img src="https://colab.research.google.com/img/colab_favicon_256px.png" alt="Colab Logo" width="28" style="vertical-align: middle;"/> Part 1: Prognostics**](https://colab.research.google.com/github/bbrisch/summer_school_prog_dm/blob/master/prognostics_notebook.ipynb)
 
 ### [**<img src="https://colab.research.google.com/img/colab_favicon_256px.png" alt="Colab Logo" width="28" style="vertical-align: middle;"/> Part 2: Decision Making**](https://colab.research.google.com/github/bbrisch/summer_school_prog_dm/blob/master/decision_making_notebook.ipynb)
+
+### [**<img src="https://colab.research.google.com/img/colab_favicon_256px.png" alt="Colab Logo" width="28" style="vertical-align: middle;"/> Full assignment**](https://colab.research.google.com/github/bbrisch/summer_school_prog_dm/blob/master/assignment_notebook.ipynb)
