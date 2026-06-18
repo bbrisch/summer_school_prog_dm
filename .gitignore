@@ -9,6 +9,6 @@ wheels/
 # Virtual environments
 .venv
 
-*.pkl
+# *.pkl
 *.zip
-*.parquet
+# *.parquet
