@@ -32,6 +32,13 @@ class ReplacementAgent:
         self.test_tfs = np.array([k.shape[0] for k in self.d_test]) + 0.5
         return
 
+    def process_prognostics(self, prognostics: list):
+        tfs = np.array([k.shape[0] for k in prognostics]) + 0.5
+        prog = list_to_nan_padded_array(arr_list=prognostics)
+        prog = prog[:, self.cf["Delta_T"] - 1 :: self.cf["Delta_T"]]
+
+        return tfs, prog
+
     def _get_prog(self) -> None:
         self.trainval_prog = list_to_nan_padded_array(
             arr_list=self.d_train + self.d_val
