@@ -26,10 +26,8 @@ class ReplacementAgent:
         return
 
     def _get_tfs(self) -> None:
-        self.trainval_tfs = (
-            np.array([k.shape[0] for k in self.d_train + self.d_val]) + 0.5
-        )
-        self.test_tfs = np.array([k.shape[0] for k in self.d_test]) + 0.5
+        self.trainval_tfs = np.array([k.shape[0] for k in self.d_train+self.d_val]) + 0.5
+        self._test_tfs = np.array([k.shape[0] for k in self.d_test]) + 0.5
         return
 
     def process_prognostics(self, prognostics: list):
