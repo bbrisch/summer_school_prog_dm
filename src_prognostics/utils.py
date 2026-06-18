@@ -14,6 +14,7 @@ def load_data(file_name: str) -> pd.DataFrame:
         "train",
         "validation",
         "test",
+        "test_2",
     ], 'File name can be either "train", "validation" or "test" '
 
     return pd.read_parquet(
@@ -21,14 +22,15 @@ def load_data(file_name: str) -> pd.DataFrame:
     )
 
 
-def save_prognostics(prognostics: list, file_name: str):
-    path = os.path.join("himap_results", "prognostics")
+def save_prognostics(prognostics: list, model_name: str, file_name: str):
+    path = os.path.join("himap_results", "prognostics", model_name)
     os.makedirs(path, exist_ok=True)
 
     assert file_name in [
         "train",
         "validation",
         "test",
+        "test_2",
     ], 'File name can be either "train", "validation" or "test" '
 
     with open(os.path.join(path, file_name + ".pkl"), "wb") as f:
@@ -37,12 +39,14 @@ def save_prognostics(prognostics: list, file_name: str):
     print(f"{file_name} saved succesfully!")
 
 
-def load_prognostics(file_name: str):
+def load_prognostics(model_name: str, file_name: str):
     if ".pkl" not in file_name:
         file_name = f"{file_name}.pkl"
-    path = os.path.join("himap_results", "prognostics", file_name)
+    path = os.path.join("himap_results", "prognostics", model_name, file_name)
 
-    if not any([mode in file_name for mode in ["train", "validation", "test"]]):
+    if not any(
+        [mode in file_name for mode in ["train", "validation", "test", "test_2"]]
+    ):
         raise RuntimeError(
             f'File name {file_name} has to be either "train", "validation" or "test"!'
         )
@@ -84,6 +88,7 @@ def format_data(df) -> dict:
 
     return output_dict, max_len
 
+
 def list_to_nan_padded_array(arr_list: list[ndarray]) -> ndarray:
     """
     Converts a list of 2D-arrays with different lengths into
@@ -91,21 +96,23 @@ def list_to_nan_padded_array(arr_list: list[ndarray]) -> ndarray:
 
     Args:
         arr_list: list of N 2D arrays with sizes (Ti, D)
-    
+
     Returns:
         nan_array (N, Tmax, D)
     """
     # 1. Determine dimensions
     num_comps = len(arr_list)
     max_rows = np.max([a.shape[0] for a in arr_list])
-    num_cols = arr_list[0].shape[1] # Assumes all matrices have the same number of columns
-    
+    num_cols = arr_list[0].shape[
+        1
+    ]  # Assumes all matrices have the same number of columns
+
     # 2. Initialize a 3D array full of NaNs
     nan_array = np.full((num_comps, max_rows, num_cols), np.nan)
-    
+
     # 3. Fill the array slice-by-slice
     for k in range(num_comps):
-        nan_array[k, :arr_list[k].shape[0], :] = arr_list[k]
+        nan_array[k, : arr_list[k].shape[0], :] = arr_list[k]
     return nan_array
 
 
