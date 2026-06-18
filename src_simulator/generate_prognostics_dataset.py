@@ -25,6 +25,10 @@ def process_data(key, config):
         n_simu = config["n_simu_val"]
     elif key == "test":
         n_simu = config["n_simu_test"]
+    elif key == "test_2":
+        n_simu = config["n_simu_test_2"]
+    else:
+        assert False
 
     for i, load in enumerate(loading_profiles):
 
@@ -75,5 +79,5 @@ if __name__ == "__main__":
     with open("sim_config.yml", "rb") as f:
         sim_config = yaml.safe_load(f)
 
-    for k in ["train", "validation", "test"]:
+    for k in ["train", "validation", "test", "test_2"]:
         process_data(k, sim_config)
